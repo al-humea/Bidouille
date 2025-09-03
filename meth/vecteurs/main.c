@@ -3,5 +3,6 @@
 
 int main(void) {
     printf("Expérimentations vectorielles\n");
+    
     return 0;
 }
