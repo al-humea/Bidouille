@@ -12,6 +12,8 @@ vec3 v3scal(float scal, vec3 a);
 float v3norm(vec3 a);
 vec3 v3u(vec3 a);
 float v3dist(vec3 a, vec3 b);
-
+//vectors2
+float v3scalprod(vec3 a, vec3 b);
+float v3angle(vec3 a, vec3 b);
 
 #endif 

@@ -42,3 +42,11 @@ vec3 v3u(vec3 a){
 float v3dist(vec3 a, vec3 b){
     return v3norm(v3sub(b, a));
 }
+
+float v3scalprod(vec3 a, vec3 b){
+    return (a.x * b.x + a.y * b.y + a.z * b.z);
+}
+
+float v3angle(vec3 a, vec3 b){
+    return acosf(v3scalprod(a, b)/(v3norm(a)*v3norm(b)));
+}

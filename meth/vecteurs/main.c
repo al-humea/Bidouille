@@ -23,5 +23,7 @@ int main(void) {
     printf("|a| = %.3f\n", v3norm(c));
     vprint("â", v3u(c));
     printf("Distance entre a et b = %f\n", v3dist(c, d));
+    printf("a•b=%.3f\n", v3scalprod(c, d));
+    printf("Angle entre a et b = %frad\n", v3angle(c, d));
     return 0;
 }
