@@ -15,5 +15,5 @@ float v3dist(vec3 a, vec3 b);
 //vectors2
 float v3scalprod(vec3 a, vec3 b);
 float v3angle(vec3 a, vec3 b);
-
+vec3 v3prod(vec3 a, vec3 b);
 #endif 
