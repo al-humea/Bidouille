@@ -3,8 +3,10 @@
 _Un dépôt pour mes bidouillages quotidiens, idées et expérimentations._
 
 
-## 📁 Contenu - J1
+## 📁 Contenu
 
-- **`meth/`** — Révision programmation
+- **`meth/`** - Révision programmation
 ---
-- **`rien/`** — Rien
+- **`rien/`** - Rien
+---
+- **`prograph/`** - Essentiel de mes cours de programmation graphiques nécessite l'utilitaire "ezcogl" de mon université
