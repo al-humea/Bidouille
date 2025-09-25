@@ -34,9 +34,9 @@
 class Viewer: public EZCOGL::GLViewer
 {
 	EZCOGL::ShaderProgram::UP shaderPrg;
-	EZCOGL::MeshRenderer::UP cube_rend;
-	float tps;
-	EZCOGL::Texture2D::SP tex;
+
+	int nbVertices;
+    int nbInstances;
 
 public:
 	Viewer();
@@ -51,60 +51,73 @@ int main(int, char**)
 	return v.launch3d();
 }
 
-Viewer::Viewer()
+Viewer::Viewer() : nbVertices(40), nbInstances(10)
 {}
 
 void Viewer::init_ogl()
 {
-	shaderPrg = EZCOGL::ShaderProgram::create({{GL_VERTEX_SHADER, EZCOGL::load_src(SHADERS_PATH + "/TP3_2.vs")}, {GL_FRAGMENT_SHADER, EZCOGL::load_src(SHADERS_PATH + "/TP3_2.fs")}}, "Square");
-	
-	//texture
-	tex = EZCOGL::Texture2D::create({GL_LINEAR, GL_REPEAT});
-	tex->load(DATA_PATH + "/lined_woolen.png", false);
+	shaderPrg = EZCOGL::ShaderProgram::create({{GL_VERTEX_SHADER, EZCOGL::load_src(SHADERS_PATH + "/TUTO2_3.vs")}, {GL_FRAGMENT_SHADER, EZCOGL::load_src(SHADERS_PATH + "/TUTO2_3.fs")}}, "ImplicitGeom");
+
 	// ***********************************
 	// Geometry
 	// ***********************************
-	auto meshCube = EZCOGL::Mesh::Cube();
-	cube_rend = meshCube->renderer(1, -1, 2, -1, -1);
-	// create a VBO with the position of 4 2D vertices (for point and line loop draw)
+    
+	// NO GEOMETRY : WE WILL CREATE IT IN THE VERTEX SHADER !
+
+	// set scene center and radius for the init of matrix view/proj
 	set_scene_center(EZCOGL::GLVec3(0.f, 0.f, 0.f));
-	set_scene_radius(5.f);
+	set_scene_radius(2.f);
+
 	// Define the color to use when refreshing screen
-    glClearColor(0.1f, 0.1f, 0.1f, 1.f);
+    glClearColor(0.1, 0.1, 0.1, 1.0);
 }
 
 void Viewer::draw_ogl()
 {
-	// Clear the buffer before shaders/TP3.fs shaders/TP3.vs= this->get_view_matrix();
+	// Clear the buffer before to draw the next frame
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_PROGRAM_POINT_SIZE);
+
+    // Get the view and projection matrix
+	const EZCOGL::GLMat4& view = this->get_view_matrix();
 	const EZCOGL::GLMat4& proj = this->get_projection_matrix();
-	const EZCOGL::GLMat4& modelCube = EZCOGL::Transfo::scale(1.f);
+
+    // Construct a model matrix
+    const EZCOGL::GLMat4& model = EZCOGL::Transfo::scale(1.f);
+
 	// ***********************************
 	// Rendering
 	// ***********************************
+	
+    // activate Z-buffer
 	glEnable(GL_DEPTH_TEST);
-	// Bind the shader program (EZCOGL wrapper)
-	tex->bind(0);
-	shaderPrg->bind();
-	// Bind the VAO (EZCOGL wrapper)
-	tps = EZCOGL::current_time();
-	EZCOGL::set_uniform_value(0, modelCube);
+
+
+	EZCOGL::VAO::none()->bind();
+    shaderPrg->bind();
+	float temps = EZCOGL::current_time();
+	// Uniforms variables send to the GPU
+	EZCOGL::set_uniform_value(0, model);
 	EZCOGL::set_uniform_value(1, view);
 	EZCOGL::set_uniform_value(2, proj);
-	// 1st pass : Draw Points
-	cube_rend->draw(GL_TRIANGLES);
+	EZCOGL::set_uniform_value(3, nbVertices);
+	EZCOGL::set_uniform_value(4, nbInstances);
+	EZCOGL::set_uniform_value(5, temps);
+	glDrawArraysInstanced(GL_LINE_STRIP, 0/*first index of primitive*/, nbVertices, nbInstances);
 }
 
 void Viewer::interface_ogl()
 {
-	ImGui::GetIO().FontGlobalScale = 3.0f;
-	ImGui::Begin("TP1 Introduction",nullptr, ImGuiWindowFlags_NoSavedSettings);
+	ImGui::GetIO().FontGlobalScale = 1.0f;
+	ImGui::Begin("Craze", nullptr, ImGuiWindowFlags_NoSavedSettings);
 	ImGui::SetWindowSize({0,0});
 
 	ImGui::Text("FPS :(%2.2lf)", fps_);
 	if (ImGui::Button("Reload shaders"))
-		shaderPrg = EZCOGL::ShaderProgram::create({{GL_VERTEX_SHADER, EZCOGL::load_src(SHADERS_PATH + "/TP3_2.vs")}, {GL_FRAGMENT_SHADER, EZCOGL::load_src(SHADERS_PATH + "/TP3_2.fs")}}, "Square");
-	if (ImGui::CollapsingHeader("Texture content"))
-	ImGui::Image(reinterpret_cast<ImTextureID>(tex->id()), ImVec2(400, 400), ImVec2(0, 1), ImVec2(1, 0));
+		shaderPrg = EZCOGL::ShaderProgram::create({{GL_VERTEX_SHADER, EZCOGL::load_src(SHADERS_PATH + "/TUTO2_3.vs")}, {GL_FRAGMENT_SHADER, EZCOGL::load_src(SHADERS_PATH + "/TUTO2_3.fs")}}, "ImplicitGeom");
+
+	ImGui::SliderInt("#Vertices", &nbVertices, 2, 40);
+	ImGui::SliderInt("#Instances", &nbInstances, 2, 40);
 
 	ImGui::End();
 }
