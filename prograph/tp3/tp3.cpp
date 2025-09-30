@@ -100,12 +100,12 @@ void Viewer::draw_ogl()
 void Viewer::interface_ogl()
 {
 	ImGui::GetIO().FontGlobalScale = 3.0f;
-	ImGui::Begin("TP1 Introduction",nullptr, ImGuiWindowFlags_NoSavedSettings);
+	ImGui::Begin("TP3",nullptr, ImGuiWindowFlags_NoSavedSettings);
 	ImGui::SetWindowSize({0,0});
 
 	ImGui::Text("FPS :(%2.2lf)", fps_);
 	if (ImGui::Button("Reload shaders"))
-		shaderPrg = EZCOGL::ShaderProgram::create({{GL_VERTEX_SHADER, EZCOGL::load_src(SHADERS_PATH + "/TP3.vs")}, {GL_FRAGMENT_SHADER, EZCOGL::load_src(SHADERS_PATH + "/TP3.fs")}}, "Square");
+		shaderPrg = EZCOGL::ShaderProgram::create({{GL_VERTEX_SHADER, EZCOGL::load_src(SHADERS_PATH + "/TP3.vs")}, {GL_FRAGMENT_SHADER, EZCOGL::load_src(SHADERS_PATH + "/TP3.fs")}}, "Textured square");
 
 	if (ImGui::CollapsingHeader("Texture content"))
 	ImGui::Image(reinterpret_cast<ImTextureID>(tex->id()), ImVec2(400, 400), ImVec2(0, 1), ImVec2(1, 0));
